@@ -35,13 +35,22 @@ plt.grid()
 plt.show()
 
 # 计算梯度 求导
-with tf.GradientTape as t:
+with tf.GradientTape() as t:
     y = tf.nn.sigmoid(x)
-
 plt.plot(x.numpy(), t.gradient(y, x).numpy())
 plt.figure(figsize=(5, 2.5))
 plt.xlabel('x')
 plt.ylabel('grad of sigmoid')
+plt.grid()
+plt.show()
+
+
+with tf.GradientTape() as t:
+    y = tf.nn.tanh(x)
+plt.plot(x.numpy(), t.gradient(y, x).numpy())
+plt.figure(figsize=(5, 2.5))
+plt.xlabel('x')
+plt.ylabel('grad of tanh')
 plt.grid()
 plt.show()
 
