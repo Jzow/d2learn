@@ -116,18 +116,18 @@ def train_epoch_ch3(net, train_iter, loss, updater):
     metric = Accumulator(3)
     for X, y in train_iter:
         # 计算梯度
-        with tf.GradientTape() as type:
+        with tf.GradientTape() as tape:
             y_hat = net(X)
-            if isinstance(loss, tf.keras.optimizers.Optimizer):
+            if isinstance(loss, tf.keras.losses.Loss):
                 l = loss(y, y_hat)
             else:
                 l = loss(y_hat, y)
         if isinstance(updater, tf.keras.optimizers.Optimizer):
-            params = net.trainable_veriables
-            grads = type.gradient(l, params)
+            params = net.trainable_variables
+            grads = tape.gradient(l, params)
             updater.apply_gradients(zip(grads, params))
         else:
-            updater(X.shape[0], type.gradient(l, updater.params))
+            updater(X.shape[0], tape.gradient(l, updater.params))
         # keras的loss默认返回一个批量平均损失
         l_sum = l * float(tf.size(y)) if isinstance(loss, tf.keras.losses.Loss) else tf.reduce_sum(l)
         metric.add(l_sum, accuracy(y_hat, y), tf.size(y))
